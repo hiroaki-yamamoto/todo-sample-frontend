@@ -1,6 +1,11 @@
 # Todo App (Frontend)
 
+[![Frontend CI Img]][Frontend CI Link]
+
 This is a modern Next.js frontend for the Todo Sample application. It is built with React 19, Next.js, and styled with Tailwind CSS.
+
+[Frontend CI Img]: https://github.com/hiroaki-yamamoto/todo-sample-frontend/actions/workflows/test.yml/badge.svg
+[Frontend CI Link]: https://github.com/hiroaki-yamamoto/todo-sample-frontend/actions/workflows/test.yml
 
 ## Prerequisites
 
