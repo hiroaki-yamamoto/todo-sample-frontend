@@ -24,6 +24,7 @@
   },
   "trustedDependencies": [
     "sharp",
+    "cypress",
     "unrs-resolver",
   ],
   "packages": {
