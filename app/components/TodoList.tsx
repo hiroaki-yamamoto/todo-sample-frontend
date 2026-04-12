@@ -11,6 +11,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
   const [wipEndDate, setWipEndDate] = useState("");
   const [completedStartDate, setCompletedStartDate] = useState("");
   const [completedEndDate, setCompletedEndDate] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const filteredTodos = useMemo(() => {
     return todos.filter((todo) => {
@@ -59,9 +60,22 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
         }
       }
 
+      // 4. Filter by Status
+      if (statusFilter !== "All") {
+        let currentStatus = "Pending";
+        if (todo.completedAt) {
+          currentStatus = "Completed";
+        } else if (todo.wipAt) {
+          currentStatus = "WIP";
+        }
+        if (currentStatus !== statusFilter) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [todos, searchQuery, wipStartDate, wipEndDate, completedStartDate, completedEndDate]);
+  }, [todos, searchQuery, wipStartDate, wipEndDate, completedStartDate, completedEndDate, statusFilter]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -69,10 +83,11 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
     setWipEndDate("");
     setCompletedStartDate("");
     setCompletedEndDate("");
+    setStatusFilter("All");
   };
 
   const isFiltering =
-    searchQuery || wipStartDate || wipEndDate || completedStartDate || completedEndDate;
+    searchQuery || wipStartDate || wipEndDate || completedStartDate || completedEndDate || statusFilter !== "All";
 
   if (todos.length === 0) {
     return <p className="text-gray-500 italic py-4" data-testid="empty-message">No todos yet.</p>;
@@ -93,6 +108,22 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border px-2 py-1 rounded w-full border-gray-300"
           />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold text-gray-700" htmlFor="status-filter">Status</label>
+          <select
+            id="status-filter"
+            data-testid="filter-status"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border px-2 py-1 rounded w-full border-gray-300 bg-white"
+          >
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="WIP">WIP</option>
+            <option value="Completed">Completed</option>
+          </select>
         </div>
 
         <div className="grid grid-cols-1 gap-4">

@@ -92,4 +92,27 @@ describe("TodoList filtering", () => {
     expect(screen.getAllByTestId(/todo-item-/)).toHaveLength(3);
     expect((searchInput as HTMLInputElement).value).toBe("");
   });
+
+  it("filters by status", () => {
+    render(<TodoList todos={mockTodos} />);
+    const statusSelect = screen.getByTestId("filter-status");
+
+    // Default is All
+    expect(statusSelect).toHaveValue("All");
+
+    // Pending
+    fireEvent.change(statusSelect, { target: { value: "Pending" } });
+    expect(screen.getAllByTestId(/todo-item-/)).toHaveLength(1);
+    expect(screen.getByTestId("todo-item-1")).toBeInTheDocument();
+
+    // WIP
+    fireEvent.change(statusSelect, { target: { value: "WIP" } });
+    expect(screen.getAllByTestId(/todo-item-/)).toHaveLength(1);
+    expect(screen.getByTestId("todo-item-2")).toBeInTheDocument();
+
+    // Completed
+    fireEvent.change(statusSelect, { target: { value: "Completed" } });
+    expect(screen.getAllByTestId(/todo-item-/)).toHaveLength(1);
+    expect(screen.getByTestId("todo-item-3")).toBeInTheDocument();
+  });
 });

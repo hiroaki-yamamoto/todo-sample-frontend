@@ -22,11 +22,21 @@ export async function markWipAction(id: string, text: string) {
   revalidatePath("/");
 }
 
-export async function markCompletedAction(id: string, text: string) {
+export async function markCompletedAction(id: string, text: string, wipAt?: string | null) {
   await updateTodo({
     id,
     text,
+    wipAt,
     completedAt: new Date().toISOString(),
+  });
+  revalidatePath("/");
+}
+
+export async function undoAction(id: string, text: string, restoreWipAt?: string | null) {
+  await updateTodo({
+    id,
+    text,
+    wipAt: restoreWipAt,
   });
   revalidatePath("/");
 }
