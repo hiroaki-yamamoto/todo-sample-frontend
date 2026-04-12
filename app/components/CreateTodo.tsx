@@ -7,7 +7,7 @@ export default function CreateTodo() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [error, action, isPending] = useActionState(
-    async (prevState: any, formData: FormData) => {
+    async (prevState: string | null, formData: FormData) => {
       const res = await addTodoAction(formData);
       if (res?.error) {
         return res.error;

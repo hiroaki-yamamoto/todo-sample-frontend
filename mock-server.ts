@@ -20,13 +20,13 @@ serve({
     }
 
     if (req.method === "POST" && url.pathname === "/query") {
-      return req.json().then((body: any) => {
+      return req.json().then((body: { query: string; variables: Record<string, unknown> }) => {
         const { query, variables } = body;
         
         if (query.includes("mutation CreateTodo")) {
           const newTodo = {
             id: `new-${Date.now()}`,
-            text: variables.input.text,
+            text: String(variables?.input ? (variables.input as Record<string, unknown>).text : ""),
             wipAt: null,
             completedAt: null,
             user: { id: "u1", name: "Guest User" }
@@ -36,13 +36,20 @@ serve({
         }
 
         if (query.includes("mutation UpdateTodo")) {
-          const { id, text, wipAt, completedAt } = variables.input;
-          const todo = todos.find(t => t.id === id);
-          if (todo) {
-             todo.wipAt = wipAt;
-             todo.completedAt = completedAt;
+          const input = variables?.input as Record<string, unknown> | undefined;
+          if (input) {
+            const id = input.id as string;
+            const wipAt = input.wipAt as string | null;
+            const completedAt = input.completedAt as string | null;
+            
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+               todo.wipAt = wipAt;
+               todo.completedAt = completedAt;
+            }
+            return new Response(JSON.stringify({ data: { updateTodo: todo } }));
           }
-          return new Response(JSON.stringify({ data: { updateTodo: todo } }));
+          return new Response(JSON.stringify({ data: { updateTodo: null } }));
         }
 
          return new Response(JSON.stringify({ data: { todos } }));
