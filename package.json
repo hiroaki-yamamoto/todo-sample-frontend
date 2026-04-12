@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "mock": "concurrently -k 'bun mock-server.ts' 'bun dev'",
+    "mock": "concurrently -k 'bun mock-server.ts' 'bun dev 2>&1 1>/dev/null'",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "e2e": "cypress run"
+    "test:e2e": "cypress run",
+    "e2e": "start-server-and-test mock http://localhost:3000 test:e2e"
   },
   "dependencies": {
     "lucide-react": "^1.8.0",
@@ -26,13 +27,14 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "concurrently": "^9.2.1",
     "cypress": "^15.13.1",
     "eslint": "^9.39.4",
     "eslint-config-next": "16.2.3",
     "eslint-plugin-react": "^7.37.5",
+    "start-server-and-test": "^3.0.2",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3",
-    "start-server-and-test": "^3.0.2"
+    "typescript": "^5.9.3"
   },
   "ignoreScripts": [
     "sharp",
