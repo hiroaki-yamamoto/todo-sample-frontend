@@ -73,6 +73,9 @@ describe("Todo App", () => {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayString = yesterday.toISOString().split('T')[0];
 
+    // Select WIP status filter to show WIP date filters
+    cy.get('[data-testid="filter-status"]').select("WIP");
+
     // Filter WIP Start (yesterday)
     cy.get('[data-testid="filter-wip-start"]').type(yesterdayString);
     cy.contains("Date Filter Task").should("be.visible");

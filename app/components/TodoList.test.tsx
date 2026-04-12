@@ -53,26 +53,37 @@ describe("TodoList filtering", () => {
 
   it("filters by WIP date range", () => {
     render(<TodoList todos={mockTodos} />);
+    const statusSelect = screen.getByTestId("filter-status");
+    fireEvent.change(statusSelect, { target: { value: "WIP" } });
+
     const startInput = screen.getByTestId("filter-wip-start");
 
-    // "Buy groceries" has no wipAt, "Finish report" is Oct 1, "Walk the dog" is Oct 5
-    fireEvent.change(startInput, { target: { value: "2024-10-02" } }); // Should match only "Walk the dog"
+    // Only "Finish report" has WIP status, wipAt is Oct 1.
+    // If start is Oct 2, it should be filtered out.
+    fireEvent.change(startInput, { target: { value: "2024-10-02" } });
+    expect(screen.getByTestId("empty-filtered-message")).toBeInTheDocument();
 
+    // If start is Sep 30, it should be shown
+    fireEvent.change(startInput, { target: { value: "2024-09-30" } });
     expect(screen.getAllByTestId(/todo-item-/)).toHaveLength(1);
-    expect(screen.getByTestId("todo-item-3")).toBeInTheDocument();
+    expect(screen.getByTestId("todo-item-2")).toBeInTheDocument();
 
     const endInput = screen.getByTestId("filter-wip-end");
-    fireEvent.change(endInput, { target: { value: "2024-10-04" } }); // Should match none now
+    // If end is Sep 30 (before Oct 1), it shouldn't match
+    fireEvent.change(endInput, { target: { value: "2024-09-30" } });
     expect(screen.getByTestId("empty-filtered-message")).toBeInTheDocument();
   });
 
   it("filters by completed date range", () => {
     render(<TodoList todos={mockTodos} />);
+    const statusSelect = screen.getByTestId("filter-status");
+    fireEvent.change(statusSelect, { target: { value: "Completed" } });
+
     const endInput = screen.getByTestId("filter-completed-end");
 
     // Only 'Walk the dog' is completed on Oct 6.
     fireEvent.change(endInput, { target: { value: "2024-09-01" } }); // Too old
-    expect(screen.queryByTestId("todo-item-3")).not.toBeInTheDocument();
+    expect(screen.getByTestId("empty-filtered-message")).toBeInTheDocument();
 
     fireEvent.change(endInput, { target: { value: "2024-10-10" } }); // Should include it again
     expect(screen.getAllByTestId(/todo-item-/)).toHaveLength(1);

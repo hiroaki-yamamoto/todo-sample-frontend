@@ -50,20 +50,23 @@ export default function TodoFilters({ useFilterStateProps }: TodoFiltersProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        <DateRangeFilter
-          label="WIP Date Range"
-          dateRangeProps={dateRangeProps.wip}
-          startTestId="filter-wip-start"
-          endTestId="filter-wip-end"
-        />
-        <DateRangeFilter
-          label="Completed Date Range"
-          dateRangeProps={dateRangeProps.completed}
-          startTestId="filter-completed-start"
-          endTestId="filter-completed-end"
-        />
+        {statusFilter === TODO_STATUS.WIP && (
+          <DateRangeFilter
+            label="WIP Date Range"
+            dateRangeProps={dateRangeProps.wip}
+            startTestId="filter-wip-start"
+            endTestId="filter-wip-end"
+          />
+        )}
+        {statusFilter === TODO_STATUS.COMPLETED && (
+          <DateRangeFilter
+            label="Completed Date Range"
+            dateRangeProps={dateRangeProps.completed}
+            startTestId="filter-completed-start"
+            endTestId="filter-completed-end"
+          />
+        )}
       </div>
-
       {isFiltering && (
         <div className="flex justify-end mt-2">
           <button
