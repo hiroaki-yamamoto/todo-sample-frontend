@@ -90,15 +90,15 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
     searchQuery || wipStartDate || wipEndDate || completedStartDate || completedEndDate || statusFilter !== "All";
 
   if (todos.length === 0) {
-    return <p className="text-gray-500 italic py-4" data-testid="empty-message">No todos yet.</p>;
+    return <p className="text-gray-500 dark:text-gray-400 italic py-4" data-testid="empty-message">No todos yet.</p>;
   }
 
   return (
     <div className="flex flex-col gap-4 mt-6">
       {/* Filter UI */}
-      <div className="flex flex-col gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm" data-testid="todo-filters">
+      <div className="flex flex-col gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-sm" data-testid="todo-filters">
         <div className="flex flex-col gap-1">
-          <label className="font-semibold text-gray-700" htmlFor="search-input">Search Text</label>
+          <label className="font-semibold text-gray-700 dark:text-gray-300" htmlFor="search-input">Search Text</label>
           <input
             id="search-input"
             type="text"
@@ -106,18 +106,18 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
             placeholder="Search todos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border px-2 py-1 rounded w-full border-gray-300"
+            className="border px-2 py-1 rounded w-full border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="font-semibold text-gray-700" htmlFor="status-filter">Status</label>
+          <label className="font-semibold text-gray-700 dark:text-gray-300" htmlFor="status-filter">Status</label>
           <select
             id="status-filter"
             data-testid="filter-status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="border px-2 py-1 rounded w-full border-gray-300 bg-white"
+            className="border px-2 py-1 rounded w-full border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             <option value="All">All</option>
             <option value="Pending">Pending</option>
@@ -152,7 +152,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
             <button
               onClick={clearFilters}
               data-testid="filter-clear"
-              className="text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors"
+              className="text-white bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 px-3 py-1 rounded text-sm transition-colors"
             >
               Clear Filters
             </button>
@@ -163,7 +163,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       {/* List */}
       <div className="flex flex-col gap-2" data-testid="todo-list">
         {filteredTodos.length === 0 ? (
-          <p className="text-gray-500 italic py-4" data-testid="empty-filtered-message">
+          <p className="text-gray-500 dark:text-gray-400 italic py-4" data-testid="empty-filtered-message">
             No todos match the current filters.
           </p>
         ) : (
