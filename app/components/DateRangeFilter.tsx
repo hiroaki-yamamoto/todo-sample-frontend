@@ -2,23 +2,24 @@
 
 interface DateRangeFilterProps {
   label: string;
-  startDate: string;
-  endDate: string;
-  onStartDateChange: (value: string) => void;
-  onEndDateChange: (value: string) => void;
+  dateRangeProps: {
+    startDate: string;
+    endDate: string;
+    onStartDateChange: (value: string) => void;
+    onEndDateChange: (value: string) => void;
+  };
   startTestId: string;
   endTestId: string;
 }
 
 export default function DateRangeFilter({
   label,
-  startDate,
-  endDate,
-  onStartDateChange,
-  onEndDateChange,
+  dateRangeProps,
   startTestId,
   endTestId,
 }: DateRangeFilterProps) {
+  const { startDate, endDate, onStartDateChange, onEndDateChange } = dateRangeProps;
+
   return (
     <div className="flex flex-col gap-1">
       <span className="font-semibold text-gray-700 dark:text-gray-300">{label}</span>
