@@ -69,14 +69,6 @@ describe("Todo App", () => {
     // We can just get the last btn-wip since it's appended.
     cy.get('[data-testid="btn-wip"]').last().click();
 
-    // Today's date for our filter
-    const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
-
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowString = tomorrow.toISOString().split('T')[0];
-
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayString = yesterday.toISOString().split('T')[0];

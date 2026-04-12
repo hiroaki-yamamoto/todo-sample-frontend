@@ -2,7 +2,7 @@ import { Todo, NewTodo, UpdateTodo } from "./types";
 
 const GRAPHQL_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || "http://localhost:8080/query";
 
-async function fetchGraphQL(query: string, variables?: any) {
+async function fetchGraphQL(query: string, variables?: Record<string, unknown>) {
   const res = await fetch(GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
@@ -17,7 +17,7 @@ async function fetchGraphQL(query: string, variables?: any) {
 
   const json = await res.json();
   if (json.errors) {
-    throw new Error(`GraphQL error: ${json.errors.map((e: any) => e.message).join(", ")}`);
+    throw new Error(`GraphQL error: ${json.errors.map((e: { message: string }) => e.message).join(", ")}`);
   }
   return json.data;
 }
