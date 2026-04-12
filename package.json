@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "mock": "concurrently -k 'bun mock-server.ts' 'bun dev'",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -30,7 +31,8 @@
     "eslint-config-next": "16.2.3",
     "eslint-plugin-react": "^7.37.5",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "start-server-and-test": "^3.0.2"
   },
   "ignoreScripts": [
     "sharp",

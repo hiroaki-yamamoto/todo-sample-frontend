@@ -5,7 +5,7 @@ const defaultTodos = [
 ];
 let todos = [...defaultTodos];
 
-serve({
+const server = serve({
   port: 8080,
   fetch(req) {
     if (req.method === "OPTIONS") {
@@ -58,4 +58,13 @@ serve({
     return new Response("Not found", { status: 404 });
   }
 });
-console.log("Mock GraphQL server running on port 8080");
+console.log(`Mock GraphQL server running on port ${server.port}`);
+
+const shutdown = () => {
+  console.log("Shutting down gracefully...");
+  server.stop(true);
+  process.exit(0);
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
