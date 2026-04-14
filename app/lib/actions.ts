@@ -10,7 +10,7 @@ export async function addTodoAction(formData: FormData) {
   }
 
   await createTodo({ text });
-  revalidatePath("/");
+  revalidatePath("/todo");
 }
 
 export async function markWipAction(id: string, text: string) {
@@ -19,7 +19,7 @@ export async function markWipAction(id: string, text: string) {
     text,
     wipAt: new Date().toISOString(),
   });
-  revalidatePath("/");
+  revalidatePath("/todo");
 }
 
 export async function markCompletedAction(id: string, text: string, wipAt?: string | null) {
@@ -29,7 +29,7 @@ export async function markCompletedAction(id: string, text: string, wipAt?: stri
     wipAt,
     completedAt: new Date().toISOString(),
   });
-  revalidatePath("/");
+  revalidatePath("/todo");
 }
 
 export async function undoAction(id: string, text: string, restoreWipAt?: string | null) {
@@ -37,6 +37,48 @@ export async function undoAction(id: string, text: string, restoreWipAt?: string
     id,
     text,
     wipAt: restoreWipAt,
+    completedAt: null,
   });
-  revalidatePath("/");
+  revalidatePath("/todo");
+}
+
+import { login, createUser } from "./api";
+import { AuthInput } from "./types";
+import { redirect } from "next/navigation";
+
+export async function loginAction(prevState: any, formData: FormData) {
+  const name = formData.get("name") as string;
+  const password = formData.get("password") as string;
+
+  if (!name || !password) {
+    return { error: "Name and password are required" };
+  }
+
+  try {
+    await login({ name, password });
+  } catch (error: any) {
+    return { error: error.message || "Failed to login" };
+  }
+
+  revalidatePath("/todo");
+  redirect("/todo");
+}
+
+export async function registerAction(prevState: any, formData: FormData) {
+  const name = formData.get("name") as string;
+  const password = formData.get("password") as string;
+
+  if (!name || !password) {
+    return { error: "Name and password are required" };
+  }
+
+  try {
+    await createUser({ name, password });
+    await login({ name, password });
+  } catch (error: any) {
+    return { error: error.message || "Failed to register" };
+  }
+
+  revalidatePath("/todo");
+  redirect("/todo");
 }

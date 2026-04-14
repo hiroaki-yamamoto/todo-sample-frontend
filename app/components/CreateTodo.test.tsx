@@ -1,6 +1,25 @@
 import { test, expect, mock, describe, afterEach } from "bun:test";
-import { render, screen, fireEvent } from "@testing-library/react";
-import CreateTodo from "./CreateTodo";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
+// Mock useActionState
+mock.module("react", () => {
+  const actual = import.meta.require("react");
+  return {
+    ...actual,
+    useActionState: (actionFn: any, initialState: any) => {
+      const dispatch = async (payload: any) => {
+        if (payload instanceof Event) {
+          payload.preventDefault();
+          const form = payload.target as HTMLFormElement;
+          await actionFn(initialState, new FormData(form));
+        } else {
+          await actionFn(initialState, payload);
+        }
+      };
+      return [initialState, dispatch, false];
+    },
+  };
+});
 
 // Mock the server action
 const mockAddTodoAction = mock(async (formData: FormData) => {
@@ -16,6 +35,8 @@ const mockAddTodoAction = mock(async (formData: FormData) => {
 mock.module("../lib/actions", () => ({
   addTodoAction: mockAddTodoAction,
 }));
+
+import CreateTodo from "./CreateTodo";
 
 describe("CreateTodo", () => {
   afterEach(() => {
@@ -37,6 +58,8 @@ describe("CreateTodo", () => {
     fireEvent.change(input, { target: { value: "New Task" } });
     fireEvent.click(button);
 
-    expect(mockAddTodoAction).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockAddTodoAction).toHaveBeenCalled();
+    });
   });
 });

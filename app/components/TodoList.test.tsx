@@ -13,20 +13,17 @@ const mockTodos: Todo[] = [
   {
     id: "1",
     text: "Buy groceries",
-    user: { id: "u1", name: "Alice" },
   },
   {
     id: "2",
     text: "Finish report",
     wipAt: "2024-10-01T10:00:00Z",
-    user: { id: "u1", name: "Alice" },
   },
   {
     id: "3",
     text: "Walk the dog",
     wipAt: "2024-10-05T10:00:00Z",
     completedAt: "2024-10-06T10:00:00Z",
-    user: { id: "u1", name: "Alice" },
   },
 ];
 
