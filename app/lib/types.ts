@@ -8,7 +8,6 @@ export type Todo = {
   wipAt?: string | null;
   completedAt?: string | null;
   text: string;
-  user: User;
 };
 
 export type NewTodo = {
@@ -20,4 +19,9 @@ export type UpdateTodo = {
   text: string;
   wipAt?: string | null;
   completedAt?: string | null;
+};
+
+export type AuthInput = {
+  name: string;
+  password?: string;
 };

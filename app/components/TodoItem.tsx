@@ -36,14 +36,14 @@ export default function TodoItem({ todo }: { todo: Todo }) {
         }`}
       data-testid={`todo-item-${todo.id}`}
     >
-      <div>
+      <div data-testid="todo-text">
         <h3 className={`font-medium text-base ${todo.completedAt ? "line-through text-gray-500 dark:text-gray-400" : "text-gray-900 dark:text-gray-100"}`}>
           {todo.text}
         </h3>
         <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-col mt-1">
-          <span>Status: <span data-testid="todo-status">{statusText}</span> | User: {todo.user.name}</span>
-          {todo.wipAt && <span>WIP Date: {new Date(todo.wipAt).toLocaleString()}</span>}
-          {todo.completedAt && <span>Completed Date: {new Date(todo.completedAt).toLocaleString()}</span>}
+          <span>Status: <span data-testid="todo-status">{statusText}</span></span>
+          {todo.wipAt && <span suppressHydrationWarning>WIP Date: {new Date(todo.wipAt).toLocaleString()}</span>}
+          {todo.completedAt && <span suppressHydrationWarning>Completed Date: {new Date(todo.completedAt).toLocaleString()}</span>}
         </div>
       </div>
       <div className="flex gap-2" aria-label="Todo actions">

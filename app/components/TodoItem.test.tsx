@@ -15,7 +15,6 @@ mock.module("../lib/actions", () => ({
 const mockTodo = {
   id: "1",
   text: "Test Task",
-  user: { id: "u1", name: "Alice" },
   wipAt: null,
   completedAt: null,
 };

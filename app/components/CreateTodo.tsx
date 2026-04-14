@@ -2,6 +2,8 @@
 
 import { useActionState, useRef } from "react";
 import { addTodoAction } from "../lib/actions";
+import { Input } from "./ui/Input";
+import { Button } from "./ui/Button";
 
 export default function CreateTodo() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -20,23 +22,22 @@ export default function CreateTodo() {
 
   return (
     <form ref={formRef} action={action} className="flex gap-2 mb-4 items-center">
-      <input
+      <Input
         type="text"
         name="text"
         placeholder="What needs to be done?"
         required
         disabled={isPending}
-        className="border p-2 rounded flex-1 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-1 py-2"
         data-testid="create-todo-input"
       />
-      <button
+      <Button
         type="submit"
         disabled={isPending}
-        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50 transition-colors"
         data-testid="create-todo-submit"
       >
         {isPending ? "Adding..." : "Add"}
-      </button>
+      </Button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </form>
   );

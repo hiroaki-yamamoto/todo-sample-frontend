@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction } from "./lib/actions";
+import { registerAction } from "../lib/actions";
 import Link from "next/link";
-import { ThemeToggle } from "./components/ThemeToggle";
+import { ThemeToggle } from "../components/ThemeToggle";
 
-export default function LoginPage() {
-  const [state, formAction, isPending] = useActionState(loginAction, null);
+export default function RegisterPage() {
+  const [state, formAction, isPending] = useActionState(registerAction, null);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-50 dark:bg-gray-900 transition-colors relative">
@@ -14,8 +14,8 @@ export default function LoginPage() {
         <ThemeToggle />
       </div>
       <main className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-        <div className="bg-blue-600 dark:bg-blue-800 p-6 text-center">
-          <h1 className="text-3xl font-bold text-white">Login</h1>
+        <div className="bg-green-600 dark:bg-green-800 p-6 text-center">
+          <h1 className="text-3xl font-bold text-white">Register</h1>
         </div>
 
         <form action={formAction} className="p-8 space-y-6">
@@ -33,7 +33,7 @@ export default function LoginPage() {
               name="name"
               type="text"
               required
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 dark:bg-gray-700 dark:border-gray-600"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-green-300 dark:bg-gray-700 dark:border-gray-600"
               placeholder="Username"
             />
           </div>
@@ -46,7 +46,7 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 dark:bg-gray-700 dark:border-gray-600"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-green-300 dark:bg-gray-700 dark:border-gray-600"
               placeholder="********"
             />
           </div>
@@ -54,14 +54,14 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
+            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
           >
-            {isPending ? "Logging in..." : "Login"}
+            {isPending ? "Registering..." : "Register"}
           </button>
 
           <div className="mt-4 text-center">
-            <Link href="/register" className="text-blue-500 hover:text-blue-800 dark:text-blue-400">
-              Don&apos;t have an account? Register here
+            <Link href="/" className="text-blue-500 hover:text-blue-800 dark:text-blue-400">
+              Already have an account? Login here
             </Link>
           </div>
         </form>
