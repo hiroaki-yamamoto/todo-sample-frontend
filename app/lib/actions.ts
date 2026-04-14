@@ -2,14 +2,23 @@
 
 import { revalidatePath } from "next/cache";
 import { createTodo, updateTodo } from "./api";
+import { TodoSchema, AuthSchema } from "./schemas";
 
 export async function addTodoAction(formData: FormData) {
   const text = formData.get("text");
-  if (!text || typeof text !== "string") {
-    return { error: "Todo text is required" };
+
+  const validatedFields = TodoSchema.safeParse({
+    text: text,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Failed to create Todo",
+      fieldErrors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
-  await createTodo({ text });
+  await createTodo({ text: validatedFields.data.text });
   revalidatePath("/todo");
 }
 
@@ -49,12 +58,17 @@ export async function loginAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
   const password = formData.get("password") as string;
 
-  if (!name || !password) {
-    return { error: "Name and password are required" };
+  const validatedFields = AuthSchema.safeParse({ name, password });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Failed to login",
+      fieldErrors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
   try {
-    await login({ name, password });
+    await login({ name: validatedFields.data.name, password: validatedFields.data.password });
   } catch (error: unknown) {
     return { error: error instanceof Error ? error.message : "Failed to login" };
   }
@@ -67,13 +81,18 @@ export async function registerAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
   const password = formData.get("password") as string;
 
-  if (!name || !password) {
-    return { error: "Name and password are required" };
+  const validatedFields = AuthSchema.safeParse({ name, password });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Failed to register",
+      fieldErrors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
   try {
-    await createUser({ name, password });
-    await login({ name, password });
+    await createUser({ name: validatedFields.data.name, password: validatedFields.data.password });
+    await login({ name: validatedFields.data.name, password: validatedFields.data.password });
   } catch (error: unknown) {
     return { error: error instanceof Error ? error.message : "Failed to register" };
   }

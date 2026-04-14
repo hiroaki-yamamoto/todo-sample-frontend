@@ -19,7 +19,7 @@ export default function RegisterPage() {
         </div>
 
         <form action={formAction} className="p-8 space-y-6">
-          {state?.error && (
+          {state?.error && !state?.fieldErrors && (
             <div data-testid="error-message" className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <span className="block sm:inline">{state.error}</span>
             </div>
@@ -32,10 +32,12 @@ export default function RegisterPage() {
             <input
               name="name"
               type="text"
-              required
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-green-300 dark:bg-gray-700 dark:border-gray-600"
               placeholder="Username"
             />
+            {state?.fieldErrors?.name && (
+              <p className="text-red-500 text-sm mt-1">{state.fieldErrors.name[0]}</p>
+            )}
           </div>
 
           <div>
@@ -45,10 +47,12 @@ export default function RegisterPage() {
             <input
               name="password"
               type="password"
-              required
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-green-300 dark:bg-gray-700 dark:border-gray-600"
               placeholder="********"
             />
+            {state?.fieldErrors?.password && (
+              <p className="text-red-500 text-sm mt-1">{state.fieldErrors.password[0]}</p>
+            )}
           </div>
 
           <button
