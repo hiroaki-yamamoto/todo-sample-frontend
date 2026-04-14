@@ -1,4 +1,4 @@
-import { test, expect, mock, describe, afterEach } from "bun:test";
+import { test, expect, mock, describe, afterEach, spyOn } from "bun:test";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 // Mock useActionState
@@ -22,7 +22,8 @@ mock.module("react", () => {
 });
 
 // Mock the server action
-const mockAddTodoAction = mock(async (formData: FormData) => {
+import * as actions from "../lib/actions";
+const mockAddTodoAction = spyOn(actions, "addTodoAction").mockImplementation(async (formData: FormData) => {
   const text = formData.get("text");
   if (text === "fail") {
     return { error: "Failed to add" };
@@ -32,9 +33,8 @@ const mockAddTodoAction = mock(async (formData: FormData) => {
 
 // Since Next.js useActionState relies on React 19's features, we need to mock it
 // or mock the module importing the action. Let's mock the actions module.
-mock.module("../lib/actions", () => ({
-  addTodoAction: mockAddTodoAction,
-}));
+// mock.module replaced by spyOn above
+
 
 import CreateTodo from "./CreateTodo";
 

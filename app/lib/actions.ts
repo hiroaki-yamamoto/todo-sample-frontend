@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createTodo, updateTodo } from "./api";
+import * as api from "./api";
 import { TodoSchema, AuthSchema } from "./schemas";
 
 export async function addTodoAction(formData: FormData) {
@@ -18,12 +18,12 @@ export async function addTodoAction(formData: FormData) {
     };
   }
 
-  await createTodo({ text: validatedFields.data.text });
+  await api.createTodo({ text: validatedFields.data.text });
   revalidatePath("/todo");
 }
 
 export async function markWipAction(id: string, text: string) {
-  await updateTodo({
+  await api.updateTodo({
     id,
     text,
     wipAt: new Date().toISOString(),
@@ -32,7 +32,7 @@ export async function markWipAction(id: string, text: string) {
 }
 
 export async function markCompletedAction(id: string, text: string, wipAt?: string | null) {
-  await updateTodo({
+  await api.updateTodo({
     id,
     text,
     wipAt,
@@ -42,7 +42,7 @@ export async function markCompletedAction(id: string, text: string, wipAt?: stri
 }
 
 export async function undoAction(id: string, text: string, restoreWipAt?: string | null) {
-  await updateTodo({
+  await api.updateTodo({
     id,
     text,
     wipAt: restoreWipAt,
@@ -51,7 +51,6 @@ export async function undoAction(id: string, text: string, restoreWipAt?: string
   revalidatePath("/todo");
 }
 
-import { login, createUser } from "./api";
 import { redirect } from "next/navigation";
 
 export async function loginAction(prevState: unknown, formData: FormData) {
@@ -68,7 +67,7 @@ export async function loginAction(prevState: unknown, formData: FormData) {
   }
 
   try {
-    await login({ name: validatedFields.data.name, password: validatedFields.data.password });
+    await api.login({ name: validatedFields.data.name, password: validatedFields.data.password });
   } catch (error: unknown) {
     return { error: error instanceof Error ? error.message : "Failed to login" };
   }
@@ -91,8 +90,8 @@ export async function registerAction(prevState: unknown, formData: FormData) {
   }
 
   try {
-    await createUser({ name: validatedFields.data.name, password: validatedFields.data.password });
-    await login({ name: validatedFields.data.name, password: validatedFields.data.password });
+    await api.createUser({ name: validatedFields.data.name, password: validatedFields.data.password });
+    await api.login({ name: validatedFields.data.name, password: validatedFields.data.password });
   } catch (error: unknown) {
     return { error: error instanceof Error ? error.message : "Failed to register" };
   }

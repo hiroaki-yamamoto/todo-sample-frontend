@@ -1,16 +1,12 @@
-import { test, expect, mock, describe, afterEach } from "bun:test";
+import { test, expect, describe, afterEach, spyOn } from "bun:test";
 import { render, screen, fireEvent } from "@testing-library/react";
 import TodoItem from "./TodoItem";
 
-const mockMarkWipAction = mock(async () => { });
-const mockMarkCompletedAction = mock(async () => { });
-const mockUndoAction = mock(async () => { });
+import * as actions from "../lib/actions";
 
-mock.module("../lib/actions", () => ({
-  markWipAction: mockMarkWipAction,
-  markCompletedAction: mockMarkCompletedAction,
-  undoAction: mockUndoAction,
-}));
+const mockMarkWipAction = spyOn(actions, "markWipAction").mockImplementation(async () => { });
+const mockMarkCompletedAction = spyOn(actions, "markCompletedAction").mockImplementation(async () => { });
+const mockUndoAction = spyOn(actions, "undoAction").mockImplementation(async () => { });
 
 const mockTodo = {
   id: "1",
