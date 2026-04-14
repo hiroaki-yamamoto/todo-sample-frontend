@@ -1,9 +1,10 @@
 import { Todo, NewTodo, UpdateTodo, AuthInput } from "./types";
 import { cookies } from "next/headers";
 
-const GRAPHQL_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || "http://localhost:8080/query";
+const GRAPHQL_PUB_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_PUB_ENDPOINT || "http://localhost:8080/pub";
+const GRAPHQL_PRV_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_PRV_ENDPOINT || "http://localhost:8080/prv";
 
-async function fetchGraphQL(query: string, variables?: Record<string, unknown>, extractCookie: boolean = false) {
+async function fetchGraphQL(endpoint: "pub" | "prv", query: string, variables?: Record<string, unknown>, extractCookie: boolean = false) {
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get("jwt_token");
   const headers: Record<string, string> = {
@@ -14,7 +15,8 @@ async function fetchGraphQL(query: string, variables?: Record<string, unknown>, 
     headers["Cookie"] = `jwt_token=${tokenCookie.value}`;
   }
 
-  const res = await fetch(GRAPHQL_ENDPOINT, {
+  const targetEndpoint = endpoint === "pub" ? GRAPHQL_PUB_ENDPOINT : GRAPHQL_PRV_ENDPOINT;
+  const res = await fetch(targetEndpoint, {
     method: "POST",
     headers,
     body: JSON.stringify({ query, variables }),
@@ -59,7 +61,7 @@ export async function login(input: AuthInput) {
       }
     }
   `;
-  const data = await fetchGraphQL(mutation, { input }, true);
+  const data = await fetchGraphQL("pub", mutation, { input }, true);
   return data.login;
 }
 
@@ -72,7 +74,7 @@ export async function createUser(input: AuthInput) {
       }
     }
   `;
-  const data = await fetchGraphQL(mutation, { input }, false);
+  const data = await fetchGraphQL("pub", mutation, { input }, false);
   return data.createUser;
 }
 
@@ -87,7 +89,7 @@ export async function fetchTodos(): Promise<Todo[]> {
       }
     }
   `;
-  const data = await fetchGraphQL(query);
+  const data = await fetchGraphQL("prv", query);
   return data.todos || [];
 }
 
@@ -102,7 +104,7 @@ export async function createTodo(input: NewTodo): Promise<Todo> {
       }
     }
   `;
-  const data = await fetchGraphQL(mutation, { input });
+  const data = await fetchGraphQL("prv", mutation, { input });
   return data.createTodo;
 }
 
@@ -117,6 +119,6 @@ export async function updateTodo(input: UpdateTodo): Promise<Todo> {
       }
     }
   `;
-  const data = await fetchGraphQL(mutation, { input });
+  const data = await fetchGraphQL("prv", mutation, { input });
   return data.updateTodo;
 }

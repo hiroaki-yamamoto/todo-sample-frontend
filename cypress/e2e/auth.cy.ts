@@ -15,7 +15,7 @@ describe("Authentication Flow", () => {
     cy.get('input[name="name"]').type("invaliduser");
     cy.get('input[name="password"]').type("wrongpass");
     cy.get('button[type="submit"]').click();
-    
+
     cy.get('[data-testid="error-message"]').should("exist");
   });
 
@@ -33,7 +33,7 @@ describe("Authentication Flow", () => {
     // First register a user
     cy.request({
       method: "POST",
-      url: "http://localhost:8080/query",
+      url: "http://localhost:8080/pub",
       body: {
         query: `mutation { createUser(input: {name: "testuser", password: "testpass"}) { id name } }`
       }

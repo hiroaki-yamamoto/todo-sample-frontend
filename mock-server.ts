@@ -19,7 +19,7 @@ const server = serve({
       return new Response("OK");
     }
 
-    if (req.method === "POST" && url.pathname === "/query") {
+    if (req.method === "POST" && (url.pathname === "/pub" || url.pathname === "/prv" || url.pathname === "/query")) {
       return req.json().then((body: { query: string; variables: Record<string, unknown> }) => {
         const { query, variables } = body;
 
