@@ -43,10 +43,9 @@ export async function undoAction(id: string, text: string, restoreWipAt?: string
 }
 
 import { login, createUser } from "./api";
-import { AuthInput } from "./types";
 import { redirect } from "next/navigation";
 
-export async function loginAction(prevState: any, formData: FormData) {
+export async function loginAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
   const password = formData.get("password") as string;
 
@@ -56,15 +55,15 @@ export async function loginAction(prevState: any, formData: FormData) {
 
   try {
     await login({ name, password });
-  } catch (error: any) {
-    return { error: error.message || "Failed to login" };
+  } catch (error: unknown) {
+    return { error: error instanceof Error ? error.message : "Failed to login" };
   }
 
   revalidatePath("/todo");
   redirect("/todo");
 }
 
-export async function registerAction(prevState: any, formData: FormData) {
+export async function registerAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
   const password = formData.get("password") as string;
 
@@ -75,8 +74,8 @@ export async function registerAction(prevState: any, formData: FormData) {
   try {
     await createUser({ name, password });
     await login({ name, password });
-  } catch (error: any) {
-    return { error: error.message || "Failed to register" };
+  } catch (error: unknown) {
+    return { error: error instanceof Error ? error.message : "Failed to register" };
   }
 
   revalidatePath("/todo");

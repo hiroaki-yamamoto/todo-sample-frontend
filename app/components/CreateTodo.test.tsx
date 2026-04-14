@@ -6,11 +6,11 @@ mock.module("react", () => {
   const actual = import.meta.require("react");
   return {
     ...actual,
-    useActionState: (actionFn: any, initialState: any) => {
-      const dispatch = async (payload: any) => {
+    useActionState: (actionFn: (...args: unknown[]) => unknown, initialState: unknown) => {
+      const dispatch = async (payload: unknown) => {
         if (payload instanceof Event) {
           payload.preventDefault();
-          const form = payload.target as HTMLFormElement;
+          const form = (payload.target as HTMLFormElement);
           await actionFn(initialState, new FormData(form));
         } else {
           await actionFn(initialState, payload);
