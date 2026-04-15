@@ -1,9 +1,10 @@
-import { describe, test, expect, beforeAll, afterEach, afterAll, spyOn } from "bun:test";
+import {
+  describe, test, expect, beforeAll, afterEach, afterAll,
+  mock,
+} from "bun:test";
 
 const mockRevalidatePath = (globalThis as Record<string, unknown>).__mockRevalidatePath;
 const mockRedirect = (globalThis as Record<string, unknown>).__mockRedirect;
-
-import * as api from "./api";
 
 import {
   addTodoAction,
@@ -15,32 +16,28 @@ import {
 } from "./actions";
 
 describe("actions", () => {
-  let mockCreateTodo: ReturnType<typeof spyOn>;
-  let mockUpdateTodo: ReturnType<typeof spyOn>;
-  let mockLogin: ReturnType<typeof spyOn>;
-  let mockCreateUser: ReturnType<typeof spyOn>;
+  let mockCreateTodo: ReturnType<typeof mock>;
+  let mockUpdateTodo: ReturnType<typeof mock>;
+  let mockLogin: ReturnType<typeof mock>;
+  let mockCreateUser: ReturnType<typeof mock>;
 
-  beforeAll(() => {
-    mockCreateTodo = spyOn(api, "createTodo").mockResolvedValue(undefined as never);
-    mockUpdateTodo = spyOn(api, "updateTodo").mockResolvedValue(undefined as never);
-    mockLogin = spyOn(api, "login").mockResolvedValue(undefined as never);
-    mockCreateUser = spyOn(api, "createUser").mockResolvedValue(undefined as never);
+  beforeAll(async () => {
+    mockCreateTodo = mock(async () => { });
+    mockUpdateTodo = mock(async () => { });
+    mockLogin = mock(async () => { });
+    mockCreateUser = mock(async () => { });
+    await mock.module("./api", () => {
+      return {
+        createTodo: mockCreateTodo,
+        updateTodo: mockUpdateTodo,
+        login: mockLogin,
+        createUser: mockCreateUser,
+      };
+    });
   });
 
   afterEach(() => {
-    mockRevalidatePath.mockClear();
-    mockRedirect.mockClear();
-    if (mockCreateTodo) mockCreateTodo.mockClear();
-    if (mockUpdateTodo) mockUpdateTodo.mockClear();
-    if (mockLogin) mockLogin.mockClear();
-    if (mockCreateUser) mockCreateUser.mockClear();
-  });
-
-  afterAll(() => {
-    if (mockCreateTodo) mockCreateTodo.mockRestore();
-    if (mockUpdateTodo) mockUpdateTodo.mockRestore();
-    if (mockLogin) mockLogin.mockRestore();
-    if (mockCreateUser) mockCreateUser.mockRestore();
+    mock.clearAllMocks();
   });
 
   describe("addTodoAction", () => {
