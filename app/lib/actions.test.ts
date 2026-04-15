@@ -1,14 +1,9 @@
-import { describe, test, expect, afterEach, afterAll, spyOn } from "bun:test";
+import { describe, test, expect, beforeAll, afterEach, afterAll, spyOn } from "bun:test";
 
 const mockRevalidatePath = (globalThis as Record<string, unknown>).__mockRevalidatePath;
 const mockRedirect = (globalThis as Record<string, unknown>).__mockRedirect;
 
 import * as api from "./api";
-
-const mockCreateTodo = spyOn(api, 'createTodo').mockImplementation(async () => undefined as never);
-const mockUpdateTodo = spyOn(api, 'updateTodo').mockImplementation(async () => undefined as never);
-const mockLogin = spyOn(api, 'login').mockImplementation(async () => undefined as never);
-const mockCreateUser = spyOn(api, 'createUser').mockImplementation(async () => undefined as never);
 
 import {
   addTodoAction,
@@ -20,20 +15,32 @@ import {
 } from "./actions";
 
 describe("actions", () => {
+  let mockCreateTodo: ReturnType<typeof spyOn>;
+  let mockUpdateTodo: ReturnType<typeof spyOn>;
+  let mockLogin: ReturnType<typeof spyOn>;
+  let mockCreateUser: ReturnType<typeof spyOn>;
+
+  beforeAll(() => {
+    mockCreateTodo = spyOn(api, "createTodo").mockResolvedValue(undefined as never);
+    mockUpdateTodo = spyOn(api, "updateTodo").mockResolvedValue(undefined as never);
+    mockLogin = spyOn(api, "login").mockResolvedValue(undefined as never);
+    mockCreateUser = spyOn(api, "createUser").mockResolvedValue(undefined as never);
+  });
+
   afterEach(() => {
     mockRevalidatePath.mockClear();
     mockRedirect.mockClear();
-    mockCreateTodo.mockClear();
-    mockUpdateTodo.mockClear();
-    mockLogin.mockClear();
-    mockCreateUser.mockClear();
+    if (mockCreateTodo) mockCreateTodo.mockClear();
+    if (mockUpdateTodo) mockUpdateTodo.mockClear();
+    if (mockLogin) mockLogin.mockClear();
+    if (mockCreateUser) mockCreateUser.mockClear();
   });
 
   afterAll(() => {
-    mockCreateTodo.mockRestore();
-    mockUpdateTodo.mockRestore();
-    mockLogin.mockRestore();
-    mockCreateUser.mockRestore();
+    if (mockCreateTodo) mockCreateTodo.mockRestore();
+    if (mockUpdateTodo) mockUpdateTodo.mockRestore();
+    if (mockLogin) mockLogin.mockRestore();
+    if (mockCreateUser) mockCreateUser.mockRestore();
   });
 
   describe("addTodoAction", () => {
@@ -54,14 +61,13 @@ describe("actions", () => {
       const result = await addTodoAction(formData);
 
       expect(result == null).toBe(true);
-      expect(mockCreateTodo).toHaveBeenCalledWith({ text: "New Task" });
+      expect(mockCreateTodo).toHaveBeenCalledWith({ text: "New Task" } as any);
       expect(mockRevalidatePath).toHaveBeenCalledWith("/todo");
     });
   });
 
   describe("markWipAction", () => {
     test("updates todo with wipAt and revalidates path", async () => {
-      // Mock Date to ensure deterministic behavior check but simple match works via mock signature checks
       const id = "1";
       const text = "A task";
       await markWipAction(id, text);
