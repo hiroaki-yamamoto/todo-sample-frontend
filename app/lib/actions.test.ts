@@ -1,47 +1,35 @@
 import {
-  describe, test, expect, beforeAll, afterEach, afterAll,
-  mock,
+  describe, test, expect, beforeEach, afterEach,
+  mock, spyOn,
 } from "bun:test";
 
 const mockRevalidatePath = (globalThis as Record<string, unknown>).__mockRevalidatePath;
 const mockRedirect = (globalThis as Record<string, unknown>).__mockRedirect;
 
-describe("actions", () => {
-  let mockCreateTodo: ReturnType<typeof mock>;
-  let mockUpdateTodo: ReturnType<typeof mock>;
-  let mockLogin: ReturnType<typeof mock>;
-  let mockCreateUser: ReturnType<typeof mock>;
-  const anonymousFn = async () => { };
-  let actions: {
-    addTodoAction: typeof anonymousFn;
-    markWipAction: typeof anonymousFn;
-    markCompletedAction: typeof anonymousFn;
-    undoAction: typeof anonymousFn;
-    loginAction: typeof anonymousFn;
-    registerAction: typeof anonymousFn;
-  };
+import * as api from "./api";
 
-  beforeAll(async () => {
-    mockCreateTodo = mock(anonymousFn);
-    mockUpdateTodo = mock(anonymousFn);
-    mockLogin = mock(anonymousFn);
-    mockCreateUser = mock(anonymousFn);
-    await mock.module("./api", () => {
-      return {
-        createTodo: mockCreateTodo,
-        updateTodo: mockUpdateTodo,
-        login: mockLogin,
-        createUser: mockCreateUser,
-      };
-    });
+describe("actions", () => {
+  let mockCreateTodo: ReturnType<typeof spyOn>;
+  let mockUpdateTodo: ReturnType<typeof spyOn>;
+  let mockLogin: ReturnType<typeof spyOn>;
+  let mockCreateUser: ReturnType<typeof spyOn>;
+  const anonymousFn = async () => { return undefined as never };
+  let actions: typeof import("./actions");
+
+  beforeEach(async () => {
+    mockCreateTodo = spyOn(api, "createTodo")
+      .mockImplementation(anonymousFn);
+    mockUpdateTodo = spyOn(api, "updateTodo")
+      .mockImplementation(anonymousFn);
+    mockLogin = spyOn(api, "login")
+      .mockImplementation(anonymousFn);
+    mockCreateUser = spyOn(api, "createUser")
+      .mockImplementation(anonymousFn);
     actions = await import("./actions");
   });
 
   afterEach(() => {
     mock.clearAllMocks();
-  });
-
-  afterAll(() => {
     mock.restore();
   });
 
