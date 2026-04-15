@@ -6,26 +6,26 @@ import {
 const mockRevalidatePath = (globalThis as Record<string, unknown>).__mockRevalidatePath;
 const mockRedirect = (globalThis as Record<string, unknown>).__mockRedirect;
 
-import {
-  addTodoAction,
-  markWipAction,
-  markCompletedAction,
-  undoAction,
-  loginAction,
-  registerAction,
-} from "./actions";
-
 describe("actions", () => {
   let mockCreateTodo: ReturnType<typeof mock>;
   let mockUpdateTodo: ReturnType<typeof mock>;
   let mockLogin: ReturnType<typeof mock>;
   let mockCreateUser: ReturnType<typeof mock>;
+  const anonymousFn = async () => { };
+  let actions: {
+    addTodoAction: typeof anonymousFn;
+    markWipAction: typeof anonymousFn;
+    markCompletedAction: typeof anonymousFn;
+    undoAction: typeof anonymousFn;
+    loginAction: typeof anonymousFn;
+    registerAction: typeof anonymousFn;
+  };
 
   beforeAll(async () => {
-    mockCreateTodo = mock(async () => { });
-    mockUpdateTodo = mock(async () => { });
-    mockLogin = mock(async () => { });
-    mockCreateUser = mock(async () => { });
+    mockCreateTodo = mock(anonymousFn);
+    mockUpdateTodo = mock(anonymousFn);
+    mockLogin = mock(anonymousFn);
+    mockCreateUser = mock(anonymousFn);
     await mock.module("./api", () => {
       return {
         createTodo: mockCreateTodo,
@@ -34,17 +34,22 @@ describe("actions", () => {
         createUser: mockCreateUser,
       };
     });
+    actions = await import("./actions");
   });
 
   afterEach(() => {
     mock.clearAllMocks();
   });
 
+  afterAll(() => {
+    mock.restore();
+  });
+
   describe("addTodoAction", () => {
     test("returns error when text is invalid", async () => {
       const formData = new FormData();
       formData.append("text", "");
-      const result = await addTodoAction(formData);
+      const result = await actions.addTodoAction(formData);
 
       expect(result?.error).toBe("Failed to create Todo");
       expect(result?.fieldErrors).toHaveProperty("text");
@@ -55,7 +60,7 @@ describe("actions", () => {
     test("creates todo and revalidates path on success", async () => {
       const formData = new FormData();
       formData.append("text", "New Task");
-      const result = await addTodoAction(formData);
+      const result = await actions.addTodoAction(formData);
 
       expect(result == null).toBe(true);
       expect(mockCreateTodo).toHaveBeenCalledWith({ text: "New Task" } as object);
@@ -67,7 +72,7 @@ describe("actions", () => {
     test("updates todo with wipAt and revalidates path", async () => {
       const id = "1";
       const text = "A task";
-      await markWipAction(id, text);
+      await actions.markWipAction(id, text);
 
       expect(mockUpdateTodo).toHaveBeenCalled();
       const callArgs = mockUpdateTodo.mock.calls[0][0];
@@ -84,7 +89,7 @@ describe("actions", () => {
       const id = "2";
       const text = "Another task";
       const wipAt = "2024-01-01T12:00:00.000Z";
-      await markCompletedAction(id, text, wipAt);
+      await actions.markCompletedAction(id, text, wipAt);
 
       expect(mockUpdateTodo).toHaveBeenCalled();
       const callArgs = mockUpdateTodo.mock.calls[0][0];
@@ -101,7 +106,7 @@ describe("actions", () => {
       const id = "3";
       const text = "Undo task";
       const restoreWipAt = "2024-01-01T12:00:00.000Z";
-      await undoAction(id, text, restoreWipAt);
+      await actions.undoAction(id, text, restoreWipAt);
 
       expect(mockUpdateTodo).toHaveBeenCalled();
       const callArgs = mockUpdateTodo.mock.calls[0][0];
@@ -119,7 +124,7 @@ describe("actions", () => {
       formData.append("name", ""); // invalid empty
       formData.append("password", "");
 
-      const result = await loginAction(null, formData);
+      const result = await actions.loginAction(null, formData);
       expect(result?.error).toBe("Failed to login");
       expect(mockLogin).not.toHaveBeenCalled();
     });
@@ -131,7 +136,7 @@ describe("actions", () => {
       formData.append("name", "testuser");
       formData.append("password", "password123");
 
-      const result = await loginAction(null, formData);
+      const result = await actions.loginAction(null, formData);
       expect(result?.error).toBe("Invalid credentials");
       expect(mockLogin).toHaveBeenCalledWith({ name: "testuser", password: "password123" });
       expect(mockRedirect).not.toHaveBeenCalled();
@@ -142,7 +147,7 @@ describe("actions", () => {
       formData.append("name", "testuser");
       formData.append("password", "password123");
 
-      await loginAction(null, formData);
+      await actions.loginAction(null, formData);
       expect(mockLogin).toHaveBeenCalledWith({ name: "testuser", password: "password123" });
       expect(mockRevalidatePath).toHaveBeenCalledWith("/todo");
       expect(mockRedirect).toHaveBeenCalledWith("/todo");
@@ -154,7 +159,7 @@ describe("actions", () => {
       const formData = new FormData();
       formData.append("name", ""); // invalid empty
       formData.append("password", "");
-      const result = await registerAction(null, formData);
+      const result = await actions.registerAction(null, formData);
 
       expect(result?.error).toBe("Failed to register");
       expect(mockCreateUser).not.toHaveBeenCalled();
@@ -167,7 +172,7 @@ describe("actions", () => {
       formData.append("name", "testuser");
       formData.append("password", "password123");
 
-      const result = await registerAction(null, formData);
+      const result = await actions.registerAction(null, formData);
       expect(result?.error).toBe("User already exists");
       expect(mockCreateUser).toHaveBeenCalled();
       expect(mockLogin).not.toHaveBeenCalled();
@@ -178,7 +183,7 @@ describe("actions", () => {
       formData.append("name", "newuser");
       formData.append("password", "password123");
 
-      await registerAction(null, formData);
+      await actions.registerAction(null, formData);
 
       expect(mockCreateUser).toHaveBeenCalledWith({ name: "newuser", password: "password123" });
       expect(mockLogin).toHaveBeenCalledWith({ name: "newuser", password: "password123" });
