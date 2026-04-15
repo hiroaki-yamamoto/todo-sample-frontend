@@ -61,7 +61,7 @@ describe("actions", () => {
       const result = await addTodoAction(formData);
 
       expect(result == null).toBe(true);
-      expect(mockCreateTodo).toHaveBeenCalledWith({ text: "New Task" } as any);
+      expect(mockCreateTodo).toHaveBeenCalledWith({ text: "New Task" } as object);
       expect(mockRevalidatePath).toHaveBeenCalledWith("/todo");
     });
   });
